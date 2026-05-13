@@ -84,6 +84,33 @@ homeSpan.begin(Category::WindowCovering, "My Window Blinds");
 3. Tap **+** → **Add Accessory** → **More options**
 4. Select your device and enter the pairing code
 
+## OTA (Wireless Updates)
+
+OTA is enabled by default. After the first USB flash, all future uploads can be done over WiFi.
+
+**Three values to set at the top of the sketch:**
+
+```cpp
+#define OTA_HOSTNAME   "my-esp32-device"   // becomes my-esp32-device.local on the network
+#define OTA_PASSWORD   "homekit123"        // required when uploading via OTA
+#define SKETCH_VERSION "1.0"
+```
+
+**Upload from the terminal:**
+
+```bash
+arduino-cli upload \
+  --fqbn esp32:esp32:XIAO_ESP32S3 \
+  --port my-esp32-device.local \
+  --upload-field password=homekit123 \
+  /path/to/YourProject
+```
+
+**Upload from Arduino IDE:**
+Tools → Port → select `my-esp32-device.local`, then click Upload. The IDE will prompt for the OTA password.
+
+> OTA is handled entirely by HomeSpan — `homeSpan.poll()` listens for incoming updates automatically. No extra code needed in `loop()`.
+
 ## Project Structure
 
 ```

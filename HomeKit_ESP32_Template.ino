@@ -1,6 +1,14 @@
 #define HOMEKIT_MINIMAL
 #include <HomeSpan.h>
 
+// ── OTA / device identity ─────────────────────
+// These are the only values you need to change
+// when starting a new project from this template.
+#define OTA_HOSTNAME    "my-esp32-device"   // hostname for OTA uploads (no spaces)
+#define OTA_PASSWORD    "homekit123"        // password required by arduino-cli / IDE OTA tool
+#define SKETCH_VERSION  "1.0"
+// ─────────────────────────────────────────────
+
 // ─────────────────────────────────────────────
 // Step 1: Define your service struct here.
 //         Replace MyService and Service::LightBulb
@@ -52,10 +60,15 @@ struct MyService : Service::LightBulb {
 void setup() {
   Serial.begin(115200);
 
+  homeSpan.setHostNameSuffix("");               // use OTA_HOSTNAME as-is (no auto-appended ID)
+  homeSpan.setSketchVersion(SKETCH_VERSION);
+  homeSpan.enableOTA(OTA_PASSWORD);             // OTA via ArduinoOTA – upload to OTA_HOSTNAME.local
+
   homeSpan.setPairingCode("XXXXXXXX");          // Replace with your 8-digit HomeKit PIN
   homeSpan.setLogLevel(0);                      // 0 = minimal, 1 = info, 2 = verbose
 
-  homeSpan.begin(Category::Lighting, "My ESP32 Device");  // Change category and name
+  // 3rd arg sets the OTA/mDNS hostname (OTA_HOSTNAME.local)
+  homeSpan.begin(Category::Lighting, "My ESP32 Device", OTA_HOSTNAME);  // Change category and name
 
   new SpanAccessory();
     new Service::AccessoryInformation();
